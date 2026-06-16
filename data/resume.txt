@@ -1,0 +1,70 @@
+Juan Pablo Martínez Cordeiro
+juanpacordeiro@me.com | (210) 602-3317 | www.linkedin.com/in/jpmc-143912-
+EDUCATION
+The University of Texas at Austin					    	          Aug. 2021 – May 2026
+Ph.D. in Mechanical Engineering, Specialization in Thermal Fluids Systems 
+* Research Advisor: Dr. Narayana Aluru.
+* Dissertation Committee: Dr. Thomas J.R. Hughes, Dr. Donald Siegel, Dr. Li Shi.
+* Dissertation Title: Active interfaces in nanofluidics: from nonequilibrium statistical mechanical foundations to fluid-structure interactions.
+* Relevant Coursework: Statistical Mechanics (Dr. L. Reichl), Nanoscale Heat and Mass Transport (Dr. L. Shi), Density Functional Theory (Dr. F. Giustino), Multiscale Nanomechanics (Dr. N. Aluru), Tools/Techniques for High Performance Computing (Dr. K. Schultz), Multiscale Methods in CFD (Dr. T. Hughes), Nonlinear Finite Element Analysis (Dr. T. Hughes).
+Rice University							         	          Aug. 2017 – May 2021         
+B.Sc. in Mechanical Engineering, B.A. in Philosophy	
+* Relevant Coursework: Advanced Computational Mechanics (Dr. T. Tezduyar).
+TECHNICAL SKILLS AND SPECIALIZED TRAINING
+* High-Performance Computing: CUDA Programming (Oden Institute, Dr. Mike Giles from Oxford), continuous integration, TACC ecosystem.
+* Machine Learning: TACC ML Summer Institute, PyTorch.
+* Simulation: Molecular Dynamics (LAMMPS), Density Functional Theory (Quantum ESPRESSO). 
+FELLOWSHIPS AND AWARDS
+Cockrell School of Engineering Recruiting Fellowship			           			   2021
+Phillip C. and Linda L. Lewis Foundation Graduate Fellowship in Mechanical Engineering	   2025
+Graduate Recognition Fellowship									   2025
+PUBLICATIONS
+1. Martínez Cordeiro, J.P., and Aluru, N.R., “Water at low frequencies: vibrational decomposition reveals spectral fingerprints of surface charge and dynamic surfaces,” J. Chem. Phys., 2026.
+2. Martínez Cordeiro, J.P., and Aluru, N.R., “Thermostatting nonequilibrium systems: a thermal energy constraint for systems under directive perturbations,” J. Chem. Phys., 2025. 
+3. Nadkarni, I., Martínez Cordeiro, J.P., and Aluru, N.R., “Molecular denoising using diffusion models with physics-informed priors,” J. Phys. Chem. Lett., 2025.
+4. Martínez Cordeiro, J.P., and Aluru, N.R., “Dynamic coupling of rigid in-plane pore oscillations and flow through nanoporous two-dimensional membranes,” Phys. Rev. Fluids, 2024. 
+PRESENTATIONS
+1. Martínez Cordeiro, J.P., and Aluru, N.R., “The Low Frequency Modes of Water: Effects of Ionic Concentration, Surface Confinement, Surface Charge Density, and Surface-Driven Perturbations,” APS Global Physics Summit 2026, Denver, CO, March 16, 2026.
+2. Martínez Cordeiro, J.P., and Aluru, N.R., “Thermostatting nonequilibrium systems: approximating the limits of quasiequilibrium through simple molecular dynamics simulations,” APS Global Physics Summit 2025, Anaheim, CA, March 18, 2025.
+3. Martínez Cordeiro, J.P., and Aluru, N.R., “Molecular Dynamics Study on the Effects of In-Plane Pore Oscillations on Flow through Nanoporous 2D Membranes,” APS DFD: 76th Annual Meeting of the Division of Fluid Dynamics, Washington D.C., November 19, 2023.
+RESEARCH EXPERIENCE
+The University of Texas at Austin, Oden Institute			           Jan. 2022 – May 2026
+Graduate Research Assistant – Multiscale Nanotechnology Group
+* Designed efficient computational pipelines for analyzing large (o(GB,TB)) Molecular Dynamics (MD) trajectories leveraging parallelism and vectorization in Python and maintained it including continuous integration.
+* Modeled and analyzed steady and transient nonlinear nonequilibrium systems with a large number (o(1E5,1E6)) of degrees of freedom undergoing relaxation, external perturbations, and memory-dependence, often dealing with low signal-to-noise ratios. 
+* Developed and justified methods for applying effective thermal boundary conditions for nonequilibrium MD simulations through statistical mechanics theory and computational experiments. 
+* Derived a directional decomposition of the vibrational spectroscopy of water that revealed key details regarding the fundamental dynamics of water’s hydrogen bond network at charged and dynamic solid-liquid interfaces.
+Rice University			
+Undergraduate Research Assistant			       Sep. 2018 – Dec. 2019 | May 2020 – May 2021
+* Programmed, tested, and validated a finite difference-based model to analyze the effects of a thermal switch on the thermodynamic efficiency of Peltier cooling cycles using MATLAB.
+* Coded a nonlinear ordinary differential equation solver in MATLAB to study vibrations on oil rig drills.
+ADDITIONAL PROJECTS
+* 2D incompressible isothermal Navier Stokes solver: using the Chorin Projection and Marker-&-Cell methods to numerically study a lid-driven cavity problem in MATLAB.
+* 3D Laplace finite difference solver: using Jacobi iteration with thread block optimization in CUDA.
+* Tridiagonal equation solver: using the parallel cyclic reduction algorithm in CUDA.
+* Monte Carlo option pricing simulator: using Euler-Maruyama discretization in CUDA.
+* Surrogate modeling of nonlinear dynamical systems: using Fourier Neural Operators (FNO) and Neural ODEs in PyTorch to predict supernova evolution.
+* Unsupervised deep embedded clustering: using deep embedded clustering with convolutional autoencoders to reduce dimensionality and classify Galaxy10 dataset images.
+* Fine-tuned ResNet architectures: using transfer learning with data augmentation to detect structural damage in satellite imagery.
+TEACHING EXPERIENCE
+The University of Texas at Austin 			    			           Aug. 2025 – May 2026
+Graduate Teaching Assistant, ME 330: Fluid Dynamics
+* Hosted office hours (5-10 students average attendance), and review sessions (30-60 students average attendance) to address questions from and explain topics to undergraduate students.
+* Average rating: 4.8/5.0.
+
+The University of Texas at Austin 			      			          Aug. 2021 – Dec. 2021
+Graduate Teaching Assistant, ME 316T: Thermodynamics
+* Hosted office hours (5-10 students average attendance), review sessions (20-40 students average attendance), and mandatory discussion sessions (2 sessions of 20-30 students each) to address questions from and explain topics to undergraduate students.
+* Average rating: 4.6/5.0.
+PROFESSIONAL EXPERIENCE
+CCU, Argentina 								           Jun. 2019 – Aug. 2019
+Mechanical Engineering Production/Maintenance Intern
+* Led project to determine what parts of the plant should be insulated given a limited budget to maximize the thermodynamic efficiency of the beer production line. 
+Cervecería Centro Americana, Guatemala						May 2019 – Jun 2019
+Mechanical Engineering Maintenance Intern
+* Analyzed beer production line machinery to assemble list of critical parts prone to failure that should be kept in stock on-site, minimizing potential shutdowns and financial losses due to overseas procurement delays. 
+PROFESSIONAL ASSOCIATIONS
+Member of the American Physics Society (APS)					          2022 – Present 
+Member of the American Chemical Society (ACS)					          2025 – Present 
+SERVICE
+Mechanical Engineering Graduate Student Board (MEGSB) Peer Mentor		          2025 – Present
