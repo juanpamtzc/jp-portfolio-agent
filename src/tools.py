@@ -20,6 +20,26 @@ def get_project_metrics(project_name: str) -> str:
         return "The Portfolio Agent was built using LlamaIndex, Streamlit, and a decoupled inference pipeline."
     return "Project metrics not found."
 
+def look_up_project_details(project_name: str) -> str:
+    """
+    Performs a deep-dive technical architecture lookup for a specific project's hardware footprint.
+    """
+    project = project_name.lower()
+    if "portfolio" in project or "agent" in project:
+        return (
+            "Project: Portfolio Agent App\n"
+            "- Architecture: Decoupled Streamlit Frontend, LlamaIndex RAG Engine\n"
+            "- Model Backend: Hugging Face Serverless Inference (Gemma-2B Fine-Tuned)\n"
+            "- Core Metrics: < 1.5s latency, 0B local VRAM footprint in production."
+        )
+    elif "waymo" in project:
+        return (
+            "Project: Waymo Data Science Prep\n"
+            "- Focus: Behavior prediction and sensor fusion data pipelines.\n"
+            "- Frameworks: PyTorch, NumPy, Pandas."
+        )
+    return f"No deep-dive system specs available for '{project_name}'."
+
 def generate_tool_descriptions():
     """Returns the JSON schema of available tools for the LLM."""
     # This mirrors your generate_function_description() logic from Notebook 3
