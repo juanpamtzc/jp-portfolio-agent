@@ -47,7 +47,7 @@ def run_baseline_inference(prompt: str) -> str:
         
     try:
         # Initializing an isolated Groq instance to guarantee zero-context leakage
-        llm = Groq(model="llama3-8b-8192", api_key=GROQ_API_KEY)
+        llm = Groq(model="llama-3.1-8b-instant", api_key=GROQ_API_KEY)
         response = llm.complete(prompt)
         return str(response)
     except Exception as e:
