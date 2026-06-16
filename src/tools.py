@@ -119,54 +119,54 @@ def generate_tool_descriptions() -> list:
         }
     ]
 
+    
 def find_player_replacement(query: str) -> str:
     """
-    Pulls data directly from the deployed Tactical Scouting Engine repository,
+    Pulls CSV data directly from the deployed Tactical Scouting Engine's GitHub repo,
     runs the PCA Euclidean distance math, and returns the top 3 replacements.
     """
-    # 1. Raw GitHub URLs (No local files needed!)
-    # Note: Replace 'juanpamtzc' if your actual GitHub username differs in the URL
-    pca_url = "https://raw.githubusercontent.com/juanpamtzc/futbol-id/main/data/pca_centroids.csv"
-    meta_url = "https://raw.githubusercontent.com/juanpamtzc/futbol-id/main/data/model_metadata.csv"
+    # ⚠️ PASTE YOUR EXACT RAW GITHUB URLS HERE ⚠️
+    pca_url = "https://github.com/juanpamtzc/ftbl-fingerprint/blob/master/data/pca_centroids.csv"
+    meta_url = "https://github.com/juanpamtzc/ftbl-fingerprint/blob/master/data/model_metadata.csv"
     
     try:
-        # 2. Load data directly into memory from the cloud
+        # Load data directly into memory from the cloud
         pca_df = pd.read_csv(pca_url, index_col="Player")
         metadata = pd.read_csv(meta_url, index_col="Model")
         
-        # 3. Intelligent Name Matching
-        # Searches the query to find a matching player name from the database
+        # --- ROBUST NAME MATCHING ---
         query_lower = query.lower()
         exact_player = None
         
-        # We loop through the index to see if the user typed a name like "iniesta"
+        # Look for any part of the query that matches any part of a player's name
         for player_name in pca_df.index:
-            last_name = player_name.lower().split()[-1]
-            if last_name in query_lower or player_name.lower() in query_lower:
+            # e.g., if "messi" is in the query, and "Lionel Messi" is in the index
+            name_parts = player_name.lower().split()
+            if any(part in query_lower for part in name_parts) or player_name.lower() in query_lower:
                 exact_player = player_name
                 break
                 
         if not exact_player:
-            return "Could not identify a player from the 2015-16 La Liga database in the query. Please provide a specific name."
+            return f"Error: Could not find a player matching the description in the 2015-16 dataset. Query received: '{query}'"
             
-        # 4. Run the exact math from your scouting engine!
+        # --- THE MATH ---
         target_vector = pca_df.loc[exact_player].values.reshape(1, -1)
         distances = cdist(target_vector, pca_df.values, metric='euclidean').flatten()
         
         baseline_dist = metadata.loc["PCA", "Self_Distance_Baseline"]
         norm_distances = distances / baseline_dist
         
-        # 5. Sort and filter
+        # Sort and filter
         df_results = pd.DataFrame({
             'Player': pca_df.index,
             'Multiplier': norm_distances
         }).sort_values('Multiplier')
         
-        # Get top 3 (excluding the player themselves)
+        # Get top 3 (excluding the target player themselves)
         df_replacements = df_results[df_results['Player'] != exact_player].head(3)
         
-        # 6. Format the JSON/String for the Groq LLM to read
-        result_str = f"Tactical Scouting Engine Results for '{exact_player}':\n"
+        # --- FORMAT OUTPUT ---
+        result_str = f"Live Tactical Scouting Engine Results for '{exact_player}':\n"
         for i, row in df_replacements.iterrows():
             result_str += f"- {row['Player']} (Tactical Variance Multiplier: {row['Multiplier']:.2f}x)\n"
             
