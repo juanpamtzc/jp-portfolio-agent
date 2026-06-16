@@ -1,14 +1,15 @@
+# app.py
 import streamlit as st
-import time
-# Assuming you run the app from the root directory using: streamlit run app/app.py
-from src.model_pipeline import initialize_rag_index, run_baseline_inference, run_specialist_agent_inference
-from src.tools import look_up_project_details
 
-# 1. Page Configuration (Must be first)
+# Clean, native Python imports!
+from src.model_pipeline import initialize_rag_index, run_baseline_inference, run_specialist_agent_inference
+from src.tools import get_resume_details, get_project_metrics, look_up_project_details
+
+# 1. Page Configuration
 st.set_page_config(
-    page_title="JP Portfolio Intelligence",
+    page_title="JP Portfolio Intelligence Matrix",
     page_icon="🤖",
-    layout="wide",  # Crucial for the side-by-side matrix
+    layout="wide",
     initial_sidebar_state="expanded"
 )
 
@@ -28,17 +29,26 @@ if "messages_specialist" not in st.session_state:
         {"role": "assistant", "content": "I am the JP Portfolio Specialist Agent. I am wired into JP's resume, publications, and codebase metrics via RAG tools."}
     ]
 
-# 4. Main App Header
+# 4. Sidebar Control Panel
+with st.sidebar:
+    st.title("⚙️ Control Panel")
+    st.markdown("---")
+    st.markdown("### Evaluation Monitor")
+    st.caption("This system demonstrates cross-pipeline quality evaluation.")
+    if st.button("Reset Chat Histories"):
+        st.session_state.messages_generic = [st.session_state.messages_generic[0]]
+        st.session_state.messages_specialist = [st.session_state.messages_specialist[0]]
+        st.rerun()
+
+# 5. UI Layout
 st.title("🤖 JP Portfolio Intelligence & Evaluation Engine")
 st.caption("A production-grade demonstration of RAG-driven Agentic Orchestration vs. Foundation Models.")
 
-# 5. Build the Evaluation Matrix Columns
 col_generic, col_specialist = st.columns(2)
 
 with col_generic:
     st.subheader("🌐 Baseline Foundation LLM")
     st.info("Direct API inference without custom domain visibility.")
-    # Render historical messages
     for msg in st.session_state.messages_generic:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
@@ -46,25 +56,21 @@ with col_generic:
 with col_specialist:
     st.subheader("⚡ JP Specialist Agent (RAG + Tools)")
     st.success("Orchestrated Agent with deep context retrieval capabilities.")
-    # Render historical messages
     for msg in st.session_state.messages_specialist:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
-            # Render historical RAG context if it exists
             if msg.get("context"):
                 with st.expander("📚 Retained Source Context"):
                     for doc in msg["context"]:
                         st.caption(doc)
 
-# 6. Core Unified Chat Input Axis
-if user_query := st.chat_input("Ask about JP's engineering experience (e.g., 'What are the metrics for the Waymo project?')."):
+# 6. Chat Input Logic
+if user_query := st.chat_input("Ask a professional question (e.g., 'What are the specs of the portfolio agent?')"):
     
-    # --- UPDATE UI IMMEDIATELY ---
-    # Append user prompt to states
+    # Append user prompt immediately
     st.session_state.messages_generic.append({"role": "user", "content": user_query})
     st.session_state.messages_specialist.append({"role": "user", "content": user_query})
     
-    # Render user prompt in both columns instantly
     with col_generic:
         with st.chat_message("user"):
             st.markdown(user_query)
@@ -72,44 +78,51 @@ if user_query := st.chat_input("Ask about JP's engineering experience (e.g., 'Wh
         with st.chat_message("user"):
             st.markdown(user_query)
             
-    # --- EXECUTE INFERENCE IN PARALLEL(ISH) ---
-    
-    # A. Baseline Execution
+    # Run Baseline Model
     with col_generic:
         with st.chat_message("assistant"):
-            with st.spinner("Generating generic response..."):
-                baseline_response = run_baseline_inference(user_query)
-            st.markdown(baseline_response)
-            st.session_state.messages_generic.append({"role": "assistant", "content": baseline_response})
+            with st.spinner("Generating baseline output..."):
+                baseline_res = run_baseline_inference(user_query)
+            st.markdown(baseline_res)
+            st.session_state.messages_generic.append({"role": "assistant", "content": baseline_res})
             
-    # B. Specialist Execution (With Tool Visibility)
+    # Run Agentic Specialist Model
     with col_specialist:
         with st.chat_message("assistant"):
             with st.status("Agent thinking...", expanded=True) as status:
                 
                 eval_input = user_query
-                retrieved_tool_output = None
+                tool_output = None
+                tool_name = None
                 
-                # Simulate Tool Routing Logic
-                if any(word in user_query.lower() for word in ["project", "metric", "waymo", "portfolio"]):
-                    status.write("⚙️ Tool Match Detected: Querying `look_up_project_details`...")
-                    proj_name = "portfolio" if "portfolio" in user_query.lower() else "waymo"
-                    retrieved_tool_output = look_up_project_details(proj_name)
-                    
-                    with st.expander(f"🛠️ Executed Tool: look_up_project_details('{proj_name}')", expanded=True):
-                        st.code(retrieved_tool_output, language="yaml")
-                        
-                    eval_input += f"\n[Supplemental Tool Metrics]: {retrieved_tool_output}"
+                # Intelligent routing simulation over our improved tool list
+                query_lower = user_query.lower()
+                if "resume" in query_lower or "job" in query_lower or "experience" in query_lower:
+                    tool_name = "get_resume_details"
+                    status.write(f"⚙️ Tool Match Detected: Forwarding to `{tool_name}`...")
+                    tool_output = get_resume_details(user_query)
+                elif "metric" in query_lower:
+                    tool_name = "get_project_metrics"
+                    status.write(f"⚙️ Tool Match Detected: Forwarding to `{tool_name}`...")
+                    proj = "portfolio" if "portfolio" in query_lower else "unknown"
+                    tool_output = get_project_metrics(proj)
+                elif any(word in query_lower for word in ["spec", "architecture", "waymo", "hardware"]):
+                    tool_name = "look_up_project_details"
+                    status.write(f"⚙️ Tool Match Detected: Forwarding to `{tool_name}`...")
+                    proj = "waymo" if "waymo" in query_lower else "portfolio"
+                    tool_output = look_up_project_details(proj)
+
+                if tool_output:
+                    with st.expander(f"🛠️ Executed Tool: {tool_name}()", expanded=True):
+                        st.code(tool_output, language="text")
+                    eval_input += f"\n[Supplemental Tool Data]: {tool_output}"
                 
-                status.write("🧠 Pinging Inference API & Vector Database...")
-                specialist_response, context_blocks = run_specialist_agent_inference(eval_input, index)
+                status.write("🧠 Querying LlamaIndex RAG and fine-tuned weights...")
+                specialist_res, context_blocks = run_specialist_agent_inference(eval_input, index)
+                status.update(label="Inference Complete!", state="complete", expanded=False)
                 
-                status.update(label="Response Synthesized!", state="complete", expanded=False)
+            st.markdown(specialist_res)
             
-            # Print Final Synthesis
-            st.markdown(specialist_response)
-            
-            # Render RAG Context Visibility
             if context_blocks:
                 with st.expander("📚 RAG Source Context Retained"):
                     for block in context_blocks:
@@ -117,6 +130,6 @@ if user_query := st.chat_input("Ask about JP's engineering experience (e.g., 'Wh
                         
             st.session_state.messages_specialist.append({
                 "role": "assistant", 
-                "content": specialist_response,
+                "content": specialist_res,
                 "context": context_blocks
             })
