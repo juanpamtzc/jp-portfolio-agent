@@ -7,8 +7,7 @@ from src.tools import get_profile_summary, get_project_details
 
 # 1. Page Configuration
 st.set_page_config(
-    page_title="JP Portfolio Intelligence Matrix",
-    page_icon="🤖",
+    page_title="JP Portfolio AI LLM Agent",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -41,8 +40,8 @@ with st.sidebar:
         st.rerun()
 
 # 5. UI Layout
-st.title("🤖 JP Portfolio Intelligence & Evaluation Engine")
-st.caption("A production-grade demonstration of RAG-driven Agentic Orchestration vs. Foundation Models.")
+st.title("🤖 JP Portfolio AI LLM Agent")
+st.caption("A production-grade demonstration of Foundation LLM Models vs. RAG-driven Agentic Orchestration.")
 
 col_generic, col_specialist = st.columns(2)
 
