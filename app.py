@@ -3,7 +3,7 @@ import streamlit as st
 
 # Clean, native Python imports!
 from src.model_pipeline import initialize_rag_index, run_baseline_inference, run_specialist_agent_inference
-from src.tools import get_profile_summary, get_project_details
+from src.tools import get_profile_summary, get_project_details, find_player_replacement
 
 # 1. Page Configuration
 st.set_page_config(
@@ -108,6 +108,13 @@ if user_query := st.chat_input("Ask about JP's engineering experience or project
                     tool_name = "get_project_details"
                     status.write(f"⚙️ Tool Match Detected: Forwarding to `{tool_name}`...")
                     tool_output = get_project_details(user_query)
+                
+                # Route 3: Live Tactical Scouting Math Engine
+                elif any(word in query_lower for word in ["replace", "scout", "plays like", "iniesta", "messi", "player", "football", "soccer"]):
+                    tool_name = "find_player_replacement"
+                    status.write(f"⚙️ Live Engine Matched: Executing `{tool_name}` via GitHub Raw Data...")
+                    # Pass the entire user query to the tool so it can extract the name
+                    tool_output = find_player_replacement(user_query)
 
                 # Inject JSON tool output into the LLM prompt if a tool fired
                 if tool_output:

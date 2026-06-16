@@ -3,3 +3,5 @@ llama-index
 llama-index-embeddings-huggingface
 huggingface_hub
 llama-index-llms-groq
+pandas
+scipy
