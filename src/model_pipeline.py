@@ -24,7 +24,7 @@ def initialize_rag_index(data_dir: str = "data"):
         st.error("❌ Critical Error: 'GROQ_API_KEY' is missing from your Streamlit Secrets.")
         st.stop()
         
-    Settings.llm = Groq(model="llama3-8b-8192", api_key=GROQ_API_KEY)
+    Settings.llm = Groq(model="llama-3.1-8b-instant", api_key=GROQ_API_KEY)
     
     # Configure free, local embedding calculations
     Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
