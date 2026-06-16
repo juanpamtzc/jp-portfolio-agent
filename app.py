@@ -3,7 +3,7 @@ import streamlit as st
 
 # Clean, native Python imports!
 from src.model_pipeline import initialize_rag_index, run_baseline_inference, run_specialist_agent_inference
-from src.tools import get_resume_details, get_project_metrics, look_up_project_details
+from src.tools import get_profile_summary, get_project_details
 
 # 1. Page Configuration
 st.set_page_config(
@@ -65,7 +65,7 @@ with col_specialist:
                         st.caption(doc)
 
 # 6. Chat Input Logic
-if user_query := st.chat_input("Ask a professional question (e.g., 'What are the specs of the portfolio agent?')"):
+if user_query := st.chat_input("Ask about JP's engineering experience or projects..."):
     
     # Append user prompt immediately
     st.session_state.messages_generic.append({"role": "user", "content": user_query})
@@ -97,27 +97,26 @@ if user_query := st.chat_input("Ask a professional question (e.g., 'What are the
                 
                 # Intelligent routing simulation over our improved tool list
                 query_lower = user_query.lower()
-                if "resume" in query_lower or "job" in query_lower or "experience" in query_lower:
-                    tool_name = "get_resume_details"
+                
+                # Route 1: Profile & Resume Data
+                if any(word in query_lower for word in ["resume", "job", "experience", "skill", "education", "phd", "who is"]):
+                    tool_name = "get_profile_summary"
                     status.write(f"⚙️ Tool Match Detected: Forwarding to `{tool_name}`...")
-                    tool_output = get_resume_details(user_query)
-                elif "metric" in query_lower:
-                    tool_name = "get_project_metrics"
+                    tool_output = get_profile_summary()
+                
+                # Route 2: Project Specifics
+                elif any(word in query_lower for word in ["project", "openfoam", "f1", "telemetry", "scout", "red", "blue", "adverse", "portfolio"]):
+                    tool_name = "get_project_details"
                     status.write(f"⚙️ Tool Match Detected: Forwarding to `{tool_name}`...")
-                    proj = "portfolio" if "portfolio" in query_lower else "unknown"
-                    tool_output = get_project_metrics(proj)
-                elif any(word in query_lower for word in ["spec", "architecture", "waymo", "hardware"]):
-                    tool_name = "look_up_project_details"
-                    status.write(f"⚙️ Tool Match Detected: Forwarding to `{tool_name}`...")
-                    proj = "waymo" if "waymo" in query_lower else "portfolio"
-                    tool_output = look_up_project_details(proj)
+                    tool_output = get_project_details(user_query)
 
+                # Inject JSON tool output into the LLM prompt if a tool fired
                 if tool_output:
                     with st.expander(f"🛠️ Executed Tool: {tool_name}()", expanded=True):
-                        st.code(tool_output, language="text")
-                    eval_input += f"\n[Supplemental Tool Data]: {tool_output}"
+                        st.code(tool_output, language="json")
+                    eval_input += f"\n\n[Supplemental Structured Tool Data]:\n{tool_output}"
                 
-                status.write("🧠 Querying LlamaIndex RAG and fine-tuned weights...")
+                status.write("🧠 Querying LlamaIndex RAG and Groq weights...")
                 specialist_res, context_blocks = run_specialist_agent_inference(eval_input, index)
                 status.update(label="Inference Complete!", state="complete", expanded=False)
                 
