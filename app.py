@@ -40,7 +40,7 @@ with st.sidebar:
         st.rerun()
 
 # 5. UI Layout
-st.title("🤖 JP Portfolio AI LLM Agent")
+st.title("JP Portfolio AI LLM Agent")
 st.caption("A production-grade demonstration of Foundation LLM Models vs. RAG-driven Agentic Orchestration.")
 
 col_generic, col_specialist = st.columns(2)
