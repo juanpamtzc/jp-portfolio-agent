@@ -94,35 +94,23 @@ if user_query := st.chat_input("Ask about JP's engineering experience or project
                 tool_output = None
                 tool_name = None
                 
-                # Intelligent routing simulation over our improved tool list
+                eval_input = user_query
+                tool_output = None
+                tool_name = None
                 query_lower = user_query.lower()
                 
-                # Route 1: Profile & Resume Data
-                if any(word in query_lower for word in ["resume", "job", "experience", "skill", "education", "phd", "who is"]):
-                    tool_name = "get_profile_summary"
-                    status.write(f"⚙️ Tool Match Detected: Forwarding to `{tool_name}`...")
-                    tool_output = get_profile_summary()
-                
-                # Route 2: Project Specifics
-                elif any(word in query_lower for word in ["project", "openfoam", "f1", "telemetry", "scout", "red", "blue", "adverse", "portfolio"]):
-                    tool_name = "get_project_details"
-                    status.write(f"⚙️ Tool Match Detected: Forwarding to `{tool_name}`...")
-                    tool_output = get_project_details(user_query)
-                
-                # Route 3: Live Tactical Scouting Math Engine
-                elif any(word in query_lower for word in ["replace", "scout", "plays like", "iniesta", "messi", "player", "football", "soccer"]):
+                # Dynamic Tool Triggering (Scouting Engine explicit route)
+                if any(w in query_lower for w in ["replace", "scout", "plays like", "messi", "iniesta", "tactical twin"]):
                     tool_name = "find_player_replacement"
                     status.write(f"⚙️ Live Engine Matched: Executing `{tool_name}` via GitHub Raw Data...")
-                    # Pass the entire user query to the tool so it can extract the name
                     tool_output = find_player_replacement(user_query)
 
-                # Inject JSON tool output into the LLM prompt if a tool fired
                 if tool_output:
                     with st.expander(f"🛠️ Executed Tool: {tool_name}()", expanded=True):
-                        st.code(tool_output, language="json")
+                        st.code(tool_output, language="text")
                     eval_input += f"\n\n[Supplemental Structured Tool Data]:\n{tool_output}"
                 
-                status.write("🧠 Querying LlamaIndex RAG and Groq weights...")
+                status.write("🧠 Searching Vector Knowledge Base (Papers & Portfolio)...")
                 specialist_res, context_blocks = run_specialist_agent_inference(eval_input, index)
                 status.update(label="Inference Complete!", state="complete", expanded=False)
                 
