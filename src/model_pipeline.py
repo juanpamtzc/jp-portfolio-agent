@@ -1,13 +1,20 @@
 # src/model_pipeline.py
 import os
 import streamlit as st
-from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
+from llama_index.core import (
+    VectorStoreIndex, 
+    SimpleDirectoryReader, 
+    Settings, 
+    StorageContext, 
+    load_index_from_storage
+)
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.groq import Groq
 
 # 1. Secure Secret Management Access
 # Fetches from .streamlit/secrets.toml locally or the Streamlit Cloud dashboard
 GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", os.getenv("GROQ_API_KEY"))
+STORAGE_DIR = "./storage"
 
 @st.cache_resource(show_spinner=False)
 def initialize_rag_index(data_dir: str = "data"):
@@ -29,12 +36,20 @@ def initialize_rag_index(data_dir: str = "data"):
     # Configure free, local embedding calculations
     Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
     
-    # Read files from your /data folder
+    # 1. Load existing vector storage from disk if present
+    if os.path.exists(STORAGE_DIR) and os.listdir(STORAGE_DIR):
+        storage_context = StorageContext.from_defaults(persist_dir=STORAGE_DIR)
+        index = load_index_from_storage(storage_context)
+        return index
+
+    # 2. Otherwise build from /data directory and persist
+    if not os.path.exists(data_dir) or not os.listdir(data_dir):
+        return None
+
     reader = SimpleDirectoryReader(data_dir)
     documents = reader.load_data()
-    
-    # Assemble local context matrix
     index = VectorStoreIndex.from_documents(documents)
+    index.storage_context.persist(persist_dir=STORAGE_DIR)
     return index
 
 def run_baseline_inference(prompt: str) -> str:
@@ -63,8 +78,8 @@ def run_specialist_agent_inference(prompt: str, index) -> tuple:
     
     # 1. Pull hyper-relevant career context blocks if RAG is ready
     if index:
-        # Retrieve the top 2 closest context blocks matches from your data directory
-        retriever = index.as_retriever(similarity_top_k=2)
+        # Retrieve the top 3 closest context blocks matches from your data directory
+        retriever = index.as_retriever(similarity_top_k=3)
         nodes = retriever.retrieve(prompt)
         retrieved_contexts = [node.text for node in nodes]
     
@@ -73,8 +88,8 @@ def run_specialist_agent_inference(prompt: str, index) -> tuple:
     
     # We pass explicit professional scaffolding to anchor the agent's behavior
     system_directive = (
-        "You are the JP Portfolio Specialist Agent, an expert AI representative for JP's career. "
-        "Formulate a highly professional response using exclusively the verified context data provided below. "
+        "You are the JP Portfolio Specialist Agent, an expert AI representative for Dr. Juan Pablo Martínez Cordeiro (JP). "
+        "Formulate a highly professional response using exclusively the verified context data provided below, including Ph.D. research papers and technical projects. "
         "If the answer cannot be derived from the context, state that clearly."
     )
     
