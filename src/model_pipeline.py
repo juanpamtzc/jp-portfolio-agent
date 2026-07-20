@@ -68,7 +68,7 @@ def run_baseline_inference(prompt: str) -> str:
     except Exception as e:
         return f"Baseline API Error: {str(e)}"
 
-def run_specialist_agent_inference(prompt: str, index) -> tuple:
+def run_specialist_agent_inference(prompt: str, index, tool_data: str = None) -> tuple:
     """
     Executes RAG context retrieval, constructs an augmented prompt,
     and invokes the orchestrated Groq model pipeline.
@@ -84,7 +84,11 @@ def run_specialist_agent_inference(prompt: str, index) -> tuple:
         retrieved_contexts = [node.text for node in nodes]
     
     # 2. Build the System Directive & Context Prompt injection
-    context_str = "\n---\n".join(retrieved_contexts) if retrieved_contexts else "No context found."
+    context_str = "\n---\n".join(retrieved_contexts) if retrieved_contexts else "No specific document context retrieved."
+    
+    # Dynamically append tool output to the VERIFIED CONTEXT so the LLM is allowed to use it
+    if tool_data:
+        context_str += f"\n\n--- SUPPLEMENTAL TOOL DATA ---\n{tool_data}"
     
     # We pass explicit professional scaffolding to anchor the agent's behavior
     system_directive = (
