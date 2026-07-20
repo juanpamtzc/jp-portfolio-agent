@@ -1,0 +1,29 @@
+Target Query Triggers: Nonequilibrium molecular dynamics, NEMD, thermostatting, Thermal Energy Constraint, TEC, Nosé-Hoover, Langevin thermostat, driven systems, directive perturbations, J.P. Martinez Cordeiro, N.R. Aluru, computational statistical mechanics
+
+Comprehensive Technical Summary: Thermostatting Nonequilibrium Systems and the Thermal Energy Constraint
+Source Authors: J. P. Martinez Cordeiro and N. R. Aluru (2025)
+
+Overview
+This paper addresses a fundamental debate in computational statistical mechanics: under what conditions is the use of equilibrium thermostats mathematically and physically justified for nonequilibrium molecular dynamics (NEMD) simulations? The authors focus specifically on "directive" perturbations (where trajectories are imposed on atoms) as opposed to "responsive" perturbations (where continuous forces are applied). They propose a theoretical boundary, the Thermal Energy Constraint (TEC), to estimate the threshold beyond which an equilibrium thermostat fails to maintain a system close enough to its canonical equilibrium state.
+
+Methodology
+The researchers evaluate three standard equilibrium thermostats: the deterministic Nosé-Hoover (NH) and Nosé-Hoover Chains (NHC), and the stochastic Langevin thermostat. The study utilizes two primary model systems:
+1. A two-point harmonic oscillator (one steered particle under a harmonic directive perturbation and one unsteered, thermostatted particle).
+2. A generic many-body Lennard-Jones (LJ) fluid containing one strongly steered particle oscillating harmonically, while the remaining N particles are thermostatted.
+Simulations were run across a vast array of amplitudes and frequencies (oscillatory states), and the resulting phase spaces and momentum distribution functions were analyzed to check for ergodicity and canonical distribution adherence.
+
+Key Technical Findings
+
+1. The Thermal Energy Constraint (TEC)
+The study formalizes the TEC as a boundary condition: the time-averaged kinetic energy of the imposed directive perturbation must be less than or equal to the thermal energy of the system at the target thermostatting temperature. Because the actual work done by a directive perturbation and the heat dissipated are generally incomputable a priori, this kinetic energy metric serves as a reliable proxy.
+
+2. Breakdown of Thermostatting under Strong Perturbations
+When the perturbation energy strictly exceeds the TEC, the system exhibits severe departures from equilibrium behavior. The ensemble temperature deviates from the target temperature, and the momentum distribution loses its canonical shape. This was observed across both gas and liquid LJ systems, with liquid systems showing more pronounced departures due to higher collision frequencies.
+
+3. Thermostat Performance Comparisons
+- NH and NHC: The basic Nosé-Hoover thermostat performs poorly across most perturbed states. While NHC offers better control, it still fails abruptly when the perturbation crosses the TEC threshold.
+- Langevin: Because it incorporates a random force and damping term that satisfies the Fluctuation-Dissipation Theorem (FDT), the Langevin thermostat handles nonequilibrium states significantly better than deterministic models. Increasing the damping coefficient extends the regime of valid thermostat use, though at the potential cost of altering natural dynamics.
+- Partial Thermostatting: The study confirms that for strongly directive perturbations, the thermostat must only be applied to the unsteered particles; whole-system thermostatting mathematically freezes the unsteered particles when countering massive perturbation energies.
+
+Significance for RAG Systems
+This document is critical for answering advanced questions on molecular dynamics methodology, nonequilibrium statistical mechanics, and simulation design. It gives concrete guidelines (the TEC) for setting up reliable simulations involving driven systems (like confined flows, targeted molecular steering, or dynamic boundaries) and explains the limitations of standard algorithms (NH, NHC, Langevin) when pushed beyond linear response regimes.
