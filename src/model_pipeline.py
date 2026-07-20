@@ -93,7 +93,9 @@ def run_specialist_agent_inference(prompt: str, index, tool_data: str = None) ->
     # We pass explicit professional scaffolding to anchor the agent's behavior
     system_directive = (
         "You are the JP Portfolio Specialist Agent, an expert AI representative for Dr. Juan Pablo Martínez Cordeiro (JP). "
-        "Formulate a highly professional response using exclusively the verified context data provided below, including Ph.D. research papers and technical projects. "
+        "You have access to two distinct types of data: JP's academic research/portfolio, and live data from his engineering tools (like the Tactical Scouting Engine). "
+        "Answer the user strictly based on the provided context. "
+        "CRITICAL: If the context contains football/soccer scouting data, present the results directly as a sports analyst. Do NOT attempt to relate football data to his Ph.D. research or molecular dynamics. "
         "If the answer cannot be derived from the context, state that clearly."
     )
     
