@@ -1,5 +1,7 @@
 # src/tools.py
 import json
+import io
+import requests
 import pandas as pd
 from scipy.spatial.distance import cdist
 
@@ -125,26 +127,39 @@ def find_player_replacement(query: str) -> str:
     Pulls CSV data directly from the deployed Tactical Scouting Engine's GitHub repo,
     runs the PCA Euclidean distance math, and returns the top 3 replacements.
     """
-    # ⚠️ PASTE YOUR EXACT RAW GITHUB URLS HERE ⚠️
-    pca_url = "https://github.com/juanpamtzc/ftbl-fingerprint/blob/master/data/pca_centroids.csv"
-    meta_url = "https://github.com/juanpamtzc/ftbl-fingerprint/blob/master/data/model_metadata.csv"
+    
+    pca_url = "https://raw.githubusercontent.com/juanpamtzc/ftbl-fingerprint/master/data/pca_centroids.csv"
+    meta_url = "https://raw.githubusercontent.com/juanpamtzc/ftbl-fingerprint/master/data/model_metadata.csv"
     
     try:
-        # Load data directly into memory from the cloud
-        pca_df = pd.read_csv(pca_url, index_col="Player")
-        metadata = pd.read_csv(meta_url, index_col="Model")
+        pca_res = requests.get(pca_url, timeout=10)
+        meta_res = requests.get(meta_url, timeout=10)
+        
+        if pca_res.status_code != 200 or meta_res.status_code != 200:
+            return "Tool Error: Unable to access raw dataset on GitHub. Please check repository visibility."
+
+        pca_df = pd.read_csv(io.StringIO(pca_res.text), index_col="Player", on_bad_lines='skip')
+        metadata = pd.read_csv(io.StringIO(meta_res.text), index_col="Model", on_bad_lines='skip')
         
         # --- ROBUST NAME MATCHING ---
-        query_lower = query.lower()
-        exact_player = None
+        # --- OVERLAP SCORING FOR NAME MATCHING ---
+        clean_query = query.lower().replace("?", "").replace(".", "").replace(",", "")
+        query_words = set(clean_query.split())
         
-        # Look for any part of the query that matches any part of a player's name
+        best_match = None
+        max_overlap = 0
+        
         for player_name in pca_df.index:
-            # e.g., if "messi" is in the query, and "Lionel Messi" is in the index
-            name_parts = player_name.lower().split()
-            if any(part in query_lower for part in name_parts) or player_name.lower() in query_lower:
-                exact_player = player_name
-                break
+            name_parts = set(player_name.lower().split())
+            overlap = len(name_parts.intersection(query_words))
+            if overlap > max_overlap:
+                max_overlap = overlap
+                best_match = player_name
+                
+        if max_overlap == 0 or not best_match:
+            return f"Notice: Could not find a matching player name in the dataset for query: '{query}'"
+            
+        exact_player = best_match
                 
         if not exact_player:
             return f"Error: Could not find a player matching the description in the 2015-16 dataset. Query received: '{query}'"
