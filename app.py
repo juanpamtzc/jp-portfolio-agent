@@ -108,10 +108,11 @@ if user_query := st.chat_input("Ask about JP's engineering experience or project
                 if tool_output:
                     with st.expander(f"🛠️ Executed Tool: {tool_name}()", expanded=True):
                         st.code(tool_output, language="text")
-                    eval_input += f"\n\n[Supplemental Structured Tool Data]:\n{tool_output}"
+                    # Notice we are NO LONGER appending this to eval_input!
                 
                 status.write("🧠 Searching Vector Knowledge Base (Papers & Portfolio)...")
-                specialist_res, context_blocks = run_specialist_agent_inference(eval_input, index)
+                # We now pass tool_output as a distinct variable to the pipeline
+                specialist_res, context_blocks = run_specialist_agent_inference(eval_input, index, tool_output)
                 status.update(label="Inference Complete!", state="complete", expanded=False)
                 
             st.markdown(specialist_res)
